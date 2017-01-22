@@ -23,7 +23,7 @@ updateGame msg game =
         Started ->
             case msg of
                 KeyDown keyCode ->
-                    ( { game | snake = keyDown keyCode game.snake }, Cmd.none )
+                    ( keyDown keyCode game, Cmd.none )
 
                 Tick t ->
                     ( applyTime game, Cmd.none )
@@ -31,7 +31,7 @@ updateGame msg game =
         NotStarted ->
             case msg of
                 KeyDown keyCode ->
-                    ( { game | status = Started, snake = keyDown keyCode game.snake }, Cmd.none )
+                    ( keyDown keyCode game, Cmd.none )
 
                 _ ->
                     ( game, Cmd.none )
@@ -186,20 +186,33 @@ applyTime game =
     { game | snake = updateSnakePosition game.snake }
 
 
-keyDown : KeyCode -> Snake -> Snake
-keyDown keyCode snake =
+toggleGameStatus : GameStatus -> GameStatus
+toggleGameStatus gameStatus =
+    case gameStatus of
+        Started ->
+            NotStarted
+
+        NotStarted ->
+            Started
+
+
+keyDown : KeyCode -> Game -> Game
+keyDown keyCode game =
     case Key.fromKeyCode keyCode of
         ArrowUp ->
-            updateSnakeDirection Up snake
+            { game | snake = updateSnakeDirection Up game.snake, status = Started }
 
         ArrowRight ->
-            updateSnakeDirection Right snake
+            { game | snake = updateSnakeDirection Right game.snake, status = Started }
 
         ArrowDown ->
-            updateSnakeDirection Down snake
+            { game | snake = updateSnakeDirection Down game.snake, status = Started }
 
         ArrowLeft ->
-            updateSnakeDirection Left snake
+            { game | snake = updateSnakeDirection Left game.snake, status = Started }
+
+        Space ->
+            { game | status = toggleGameStatus game.status }
 
         _ ->
-            snake
+            game

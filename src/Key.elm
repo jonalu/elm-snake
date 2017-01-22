@@ -6,12 +6,16 @@ type Key
     | ArrowRight
     | ArrowDown
     | ArrowLeft
+    | Space
     | Unknown
 
 
 fromKeyCode : Int -> Key
 fromKeyCode keyCode =
     case keyCode of
+        32 ->
+            Space
+
         37 ->
             ArrowLeft
 

@@ -31,7 +31,7 @@ updateGame msg game =
         NotStarted ->
             case msg of
                 KeyDown keyCode ->
-                    ( { game | status = Started }, Cmd.none )
+                    ( { game | status = Started, snake = keyDown keyCode game.snake }, Cmd.none )
 
                 _ ->
                     ( game, Cmd.none )

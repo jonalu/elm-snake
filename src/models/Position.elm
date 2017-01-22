@@ -1,6 +1,6 @@
 module Position exposing (..)
 
-import GameSettings exposing (gameBoardSize)
+import GameSettings exposing (gameBoardSize, segmentSize)
 import Direction exposing (..)
 
 
@@ -10,9 +10,19 @@ type alias Position =
     }
 
 
+init : Position
+init =
+    create 0.0 0.0
+
+
 create : Float -> Float -> Position
 create x y =
     { x = x, y = y }
+
+
+toFloatTuple : Position -> ( Float, Float )
+toFloatTuple position =
+    ( position.x, position.y )
 
 
 update : Position -> Direction -> Position
@@ -33,15 +43,15 @@ update position direction =
 
 decrease : Float -> Float
 decrease currentPos =
-    if currentPos <= 0 then
-        gameBoardSize - 1
+    if currentPos <= toFloat -gameBoardSize / 2 then
+        toFloat gameBoardSize / 2
     else
-        currentPos - 1
+        currentPos - segmentSize
 
 
 increase : Float -> Float
 increase currentPos =
-    if currentPos >= gameBoardSize - 1 then
-        0
+    if currentPos >= toFloat gameBoardSize / 2 then
+        toFloat -gameBoardSize / 2
     else
-        currentPos + 1
+        currentPos + segmentSize

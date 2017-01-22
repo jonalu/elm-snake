@@ -18,13 +18,23 @@ main =
 
 
 updateGame : Msg -> Game -> ( Game, Cmd Msg )
-updateGame msg gameBoard =
-    case msg of
-        KeyDown keyCode ->
-            ( { gameBoard | snake = keyDown keyCode gameBoard.snake }, Cmd.none )
+updateGame msg game =
+    case game.status of
+        Started ->
+            case msg of
+                KeyDown keyCode ->
+                    ( { game | snake = keyDown keyCode game.snake }, Cmd.none )
 
-        Tick t ->
-            ( applyTime gameBoard, Cmd.none )
+                Tick t ->
+                    ( applyTime game, Cmd.none )
+
+        NotStarted ->
+            case msg of
+                KeyDown keyCode ->
+                    ( { game | status = Started }, Cmd.none )
+
+                _ ->
+                    ( game, Cmd.none )
 
 
 gameBoardSize : Float
@@ -38,16 +48,21 @@ snakeWidth =
 
 
 view : Game -> Html msg
-view gameBoard =
-    Html.text <| toString gameBoard.snake
+view game =
+    Html.text <| toString game.snake
 
 
 subscriptions : Game -> Sub Msg
-subscriptions model =
-    Sub.batch
-        [ Keyboard.downs KeyDown
-        , AnimationFrame.diffs Tick
-        ]
+subscriptions game =
+    case game.status of
+        NotStarted ->
+            Keyboard.downs KeyDown
+
+        Started ->
+            Sub.batch
+                [ Keyboard.downs KeyDown
+                , AnimationFrame.diffs Tick
+                ]
 
 
 initialSnake : Snake
@@ -72,7 +87,8 @@ initialFood =
 
 initialGame : Game
 initialGame =
-    { snake = initialSnake
+    { status = NotStarted
+    , snake = initialSnake
     , food = initialFood
     }
 
@@ -107,8 +123,14 @@ type alias Snake =
     }
 
 
+type GameStatus
+    = Started
+    | NotStarted
+
+
 type alias Game =
-    { snake : Snake
+    { status : GameStatus
+    , snake : Snake
     , food : Food
     }
 
@@ -161,8 +183,8 @@ increase currentPos =
 
 
 applyTime : Game -> Game
-applyTime gameBoard =
-    { gameBoard | snake = updateSnakePosition gameBoard.snake }
+applyTime game =
+    { game | snake = updateSnakePosition game.snake }
 
 
 keyDown : KeyCode -> Snake -> Snake

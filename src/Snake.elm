@@ -65,23 +65,22 @@ subscriptions game =
                 ]
 
 
+position : Float -> Float -> Position
+position x y =
+    { x = x, y = y }
+
+
 initialSnake : Snake
 initialSnake =
     { tail = []
-    , position =
-        { x = 0.0
-        , y = 0.0
-        }
+    , position = position 0.0 0.0
     , direction = Right
     }
 
 
 initialFood : Food
 initialFood =
-    { position =
-        { x = 0.0
-        , y = 0.0
-        }
+    { position = position 0.0 0.0
     }
 
 

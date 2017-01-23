@@ -84,35 +84,38 @@ handleTick game =
 
 handleKeyDown : KeyCode -> Game -> Game
 handleKeyDown keyCode game =
-    case Key.fromKeyCode keyCode of
-        ArrowUp ->
+    case game.status of
+        NotStarted ->
             { game
-                | snake = Snake.updateDirection Up game.snake
-                , status = Started
+                | status = Started
             }
 
-        ArrowRight ->
-            { game
-                | snake = Snake.updateDirection Right game.snake
-                , status = Started
-            }
+        Started ->
+            case Key.fromKeyCode keyCode of
+                ArrowUp ->
+                    { game
+                        | snake = Snake.updateDirection Up game.snake
+                    }
 
-        ArrowDown ->
-            { game
-                | snake = Snake.updateDirection Down game.snake
-                , status = Started
-            }
+                ArrowRight ->
+                    { game
+                        | snake = Snake.updateDirection Right game.snake
+                    }
 
-        ArrowLeft ->
-            { game
-                | snake = Snake.updateDirection Left game.snake
-                , status = Started
-            }
+                ArrowDown ->
+                    { game
+                        | snake = Snake.updateDirection Down game.snake
+                    }
 
-        Space ->
-            { game
-                | status = GameStatus.toggle game.status
-            }
+                ArrowLeft ->
+                    { game
+                        | snake = Snake.updateDirection Left game.snake
+                    }
 
-        _ ->
-            game
+                Space ->
+                    { game
+                        | status = NotStarted
+                    }
+
+                _ ->
+                    game

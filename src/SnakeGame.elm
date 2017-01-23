@@ -4,12 +4,16 @@ import Key exposing (..)
 import Direction exposing (..)
 import GameStatus exposing (..)
 import Game exposing (..)
+import Food exposing (..)
 import Snake exposing (..)
+import Position exposing (..)
 import MainView exposing (..)
 import Html exposing (Html, text, div)
 import Keyboard exposing (KeyCode)
 import Time exposing (Time)
 import AnimationFrame
+import Color exposing (..)
+import Random exposing (..)
 
 
 main : Program Never Game Msg
@@ -40,7 +44,10 @@ updateGame msg game =
                     )
 
                 Tick t ->
-                    ( handleTick game
+                    (handleTick game)
+
+                NewFood food ->
+                    ( handleNewFood game food
                     , Cmd.none
                     )
 
@@ -73,13 +80,56 @@ subscriptions game =
 type Msg
     = KeyDown KeyCode
     | Tick Time
+    | NewFood Food
 
 
-handleTick : Game -> Game
-handleTick game =
+handleNewFood : Game -> Food -> Game
+handleNewFood game food =
     { game
-        | snake = Snake.updatePosition game.snake
+        | food = food
     }
+
+
+handleTick : Game -> ( Game, Cmd Msg )
+handleTick game =
+    let
+        snake =
+            game.snake
+
+        food =
+            game.food
+
+        caughtFood =
+            Position.collision snake.head food.position
+
+        color =
+            case caughtFood of
+                True ->
+                    red
+
+                False ->
+                    game.snake.color
+
+        msg =
+            case caughtFood of
+                True ->
+                    Random.generate NewFood Food.createRandomGenerator
+
+                False ->
+                    Cmd.none
+
+        newSnake =
+            { snake
+                | color = color
+                , head = Snake.updateHead snake
+                , tail = Snake.updateTail snake
+            }
+    in
+        ( { game
+            | snake = newSnake
+          }
+        , msg
+        )
 
 
 handleKeyDown : KeyCode -> Game -> Game

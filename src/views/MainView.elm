@@ -34,11 +34,16 @@ view game =
                                 |> List.map
                                     (\position ->
                                         square segmentSize
-                                            |> filled lightGreen
+                                            |> filled game.snake.color
                                             |> move (toFloatTuple position)
                                     )
+
+                        food =
+                            square segmentSize
+                                |> filled orange
+                                |> move (toFloatTuple game.food.position)
                     in
-                        head :: tail
+                        food :: head :: tail
     in
         collage gameBoardSize gameBoardSize (background :: content)
             |> Element.toHtml

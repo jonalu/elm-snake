@@ -3,12 +3,14 @@ module Snake exposing (..)
 import Position exposing (..)
 import Direction exposing (..)
 import GameSettings exposing (segmentSize, initTailLength)
+import Color exposing (..)
 
 
 type alias Snake =
     { tail : List Position
     , head : Position
     , direction : Direction
+    , color : Color
     }
 
 
@@ -26,6 +28,7 @@ init =
     { tail = initTail
     , head = Position.init
     , direction = Right
+    , color = lightGreen
     }
 
 
@@ -34,9 +37,11 @@ updateDirection direction snake =
     { snake | direction = direction }
 
 
-updatePosition : Snake -> Snake
-updatePosition snake =
-    { snake
-        | head = Position.update snake.head snake.direction
-        , tail = snake.head :: (List.take (List.length snake.tail - 1) snake.tail)
-    }
+updateHead : Snake -> Position
+updateHead snake =
+    Position.update snake.head snake.direction
+
+
+updateTail : Snake -> List Position
+updateTail snake =
+    snake.head :: (List.take (List.length snake.tail - 1) snake.tail)

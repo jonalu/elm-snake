@@ -13,12 +13,7 @@ type alias Position =
 
 init : Position
 init =
-    create 0.0 0.0
-
-
-create : Float -> Float -> Position
-create x y =
-    { x = x, y = y }
+    Position 0.0 0.0
 
 
 createRandomGenerator : Random.Generator Position
@@ -29,6 +24,11 @@ createRandomGenerator =
 toFloatTuple : Position -> ( Float, Float )
 toFloatTuple position =
     ( position.x, position.y )
+
+
+random : Generator Position
+random =
+    map2 Position (float -300.0 300.0) (float -300.0 300.0)
 
 
 collision : Position -> Position -> Bool

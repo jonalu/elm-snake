@@ -113,7 +113,7 @@ handleTick game =
         msg =
             case caughtFood of
                 True ->
-                    Random.generate NewFood Food.createRandomGenerator
+                    Random.generate NewFood Food.random
 
                 False ->
                     Cmd.none

@@ -19,7 +19,7 @@ initTail =
     List.range 1 initTailLength
         |> List.map
             (\n ->
-                Position.create (toFloat -n * segmentSize) (.y Position.init)
+                Position (toFloat -n * segmentSize) (.y Position.init)
             )
 
 

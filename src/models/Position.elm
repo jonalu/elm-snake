@@ -31,8 +31,8 @@ random =
     map2 Position (float -300.0 300.0) (float -300.0 300.0)
 
 
-collision : Position -> Position -> Bool
-collision posA posB =
+overlap : Position -> Position -> Bool
+overlap posA posB =
     abs (posA.x - posB.x) < segmentSize && abs (posA.y - posB.y) < segmentSize
 
 

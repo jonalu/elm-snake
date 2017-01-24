@@ -13,6 +13,7 @@ import Keyboard exposing (KeyCode)
 import Time exposing (Time)
 import AnimationFrame
 import Random exposing (..)
+import Color exposing (..)
 
 
 main : Program Never Game Msg
@@ -108,7 +109,26 @@ handleTick game =
             game.snake
 
         caughtFood =
-            Position.collision snake.head game.food.position
+            Position.overlap snake.head game.food.position
+
+        collision =
+            Snake.collision snake
+
+        points =
+            case caughtFood of
+                True ->
+                    game.points + 1
+
+                False ->
+                    game.points
+
+        gameStatus =
+            case collision of
+                True ->
+                    NotStarted
+
+                False ->
+                    game.status
 
         msg =
             case caughtFood of
@@ -126,6 +146,8 @@ handleTick game =
     in
         ( { game
             | snake = newSnake
+            , status = gameStatus
+            , points = points
           }
         , msg
         )
@@ -135,9 +157,16 @@ handleKeyDown : KeyCode -> Game -> Game
 handleKeyDown keyCode game =
     case game.status of
         NotStarted ->
-            { game
-                | status = Started
-            }
+            case Key.fromKeyCode keyCode of
+                Space ->
+                    let
+                        newGame =
+                            Game.init
+                    in
+                        { newGame | status = Started }
+
+                _ ->
+                    game
 
         Paused ->
             { game

@@ -20,7 +20,7 @@ view game =
         content =
             case game.status of
                 NotStarted ->
-                    [ gameStatusText "Press any key to start" Color.lightGreen ]
+                    [ gameStatusText "Press space to start" Color.lightGreen ]
 
                 _ ->
                     let
@@ -30,7 +30,7 @@ view game =
                                     gameStatusText "Paused" Color.orange
 
                                 _ ->
-                                    gameStatusText "" Color.orange
+                                    gameStatusText (toString game.points) Color.orange
 
                         head =
                             square segmentSize

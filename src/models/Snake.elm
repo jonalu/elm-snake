@@ -32,6 +32,11 @@ init =
     }
 
 
+collision : Snake -> Bool
+collision snake =
+    List.any (Position.overlap snake.head) snake.tail
+
+
 updateDirection : Direction -> Snake -> Snake
 updateDirection direction snake =
     { snake | direction = direction }

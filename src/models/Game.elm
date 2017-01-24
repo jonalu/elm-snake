@@ -9,6 +9,7 @@ type alias Game =
     { status : GameStatus
     , snake : Snake
     , food : Food
+    , points : Int
     }
 
 
@@ -17,4 +18,5 @@ init =
     { status = GameStatus.init
     , snake = Snake.init
     , food = Food.init
+    , points = 0
     }

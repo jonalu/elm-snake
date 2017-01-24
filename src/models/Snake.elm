@@ -42,6 +42,15 @@ updateHead snake =
     Position.update snake.head snake.direction
 
 
-updateTail : Snake -> List Position
-updateTail snake =
-    snake.head :: (List.take (List.length snake.tail - 1) snake.tail)
+updateTail : Snake -> Bool -> List Position
+updateTail snake caughtFood =
+    let
+        tail =
+            case caughtFood of
+                True ->
+                    snake.head :: snake.head :: (List.take (List.length snake.tail - 1) snake.tail)
+
+                False ->
+                    snake.head :: (List.take (List.length snake.tail - 1) snake.tail)
+    in
+        tail

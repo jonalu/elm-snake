@@ -96,19 +96,8 @@ handleTick game =
         snake =
             game.snake
 
-        food =
-            game.food
-
         caughtFood =
-            Position.collision snake.head food.position
-
-        color =
-            case caughtFood of
-                True ->
-                    red
-
-                False ->
-                    game.snake.color
+            Position.collision snake.head game.food.position
 
         msg =
             case caughtFood of
@@ -120,9 +109,8 @@ handleTick game =
 
         newSnake =
             { snake
-                | color = color
-                , head = Snake.updateHead snake
-                , tail = Snake.updateTail snake
+                | head = Snake.updateHead snake
+                , tail = Snake.updateTail snake caughtFood
             }
     in
         ( { game

@@ -12,7 +12,6 @@ import Html exposing (Html, text, div)
 import Keyboard exposing (KeyCode)
 import Time exposing (Time)
 import AnimationFrame
-import Color exposing (..)
 import Random exposing (..)
 
 
@@ -36,6 +35,30 @@ init =
 updateGame : Msg -> Game -> ( Game, Cmd Msg )
 updateGame msg game =
     case game.status of
+        NotStarted ->
+            case msg of
+                KeyDown keyCode ->
+                    ( handleKeyDown keyCode game
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( game
+                    , Cmd.none
+                    )
+
+        Paused ->
+            case msg of
+                KeyDown keyCode ->
+                    ( handleKeyDown keyCode game
+                    , Cmd.none
+                    )
+
+                _ ->
+                    ( game
+                    , Cmd.none
+                    )
+
         Started ->
             case msg of
                 KeyDown keyCode ->
@@ -51,18 +74,6 @@ updateGame msg game =
                     , Cmd.none
                     )
 
-        NotStarted ->
-            case msg of
-                KeyDown keyCode ->
-                    ( handleKeyDown keyCode game
-                    , Cmd.none
-                    )
-
-                _ ->
-                    ( game
-                    , Cmd.none
-                    )
-
 
 subscriptions : Game -> Sub Msg
 subscriptions game =
@@ -70,7 +81,7 @@ subscriptions game =
         NotStarted ->
             Keyboard.downs KeyDown
 
-        Started ->
+        _ ->
             Sub.batch
                 [ Keyboard.downs KeyDown
                 , AnimationFrame.diffs Tick
@@ -128,6 +139,11 @@ handleKeyDown keyCode game =
                 | status = Started
             }
 
+        Paused ->
+            { game
+                | status = Started
+            }
+
         Started ->
             case Key.fromKeyCode keyCode of
                 ArrowUp ->
@@ -152,7 +168,7 @@ handleKeyDown keyCode game =
 
                 Space ->
                     { game
-                        | status = NotStarted
+                        | status = Paused
                     }
 
                 _ ->

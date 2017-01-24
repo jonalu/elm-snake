@@ -20,10 +20,18 @@ view game =
         content =
             case game.status of
                 NotStarted ->
-                    [ txt "Press any key to start" ]
+                    [ gameStatusText "Press any key to start" Color.lightGreen ]
 
-                Started ->
+                _ ->
                     let
+                        pausedText =
+                            case game.status of
+                                Paused ->
+                                    gameStatusText "Paused" Color.orange
+
+                                _ ->
+                                    gameStatusText "" Color.orange
+
                         head =
                             square segmentSize
                                 |> filled green
@@ -43,17 +51,17 @@ view game =
                                 |> filled orange
                                 |> move (toFloatTuple game.food.position)
                     in
-                        food :: head :: tail
+                        pausedText :: food :: head :: tail
     in
         collage gameBoardSize gameBoardSize (background :: content)
             |> Element.toHtml
 
 
-txt : String -> Form
-txt msg =
+gameStatusText : String -> Color -> Form
+gameStatusText msg textColor =
     msg
         |> Text.fromString
-        |> Text.color lightGreen
+        |> Text.color textColor
         |> Text.monospace
         |> Element.centered
         |> Collage.toForm

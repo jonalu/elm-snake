@@ -1,0 +1,8 @@
+body {
+  background: #000;
+}
+
+#app-container > div {
+  margin: 50px auto !important;
+  border: 1px solid #AAA;
+}

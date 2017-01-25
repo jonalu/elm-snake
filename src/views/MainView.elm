@@ -9,6 +9,7 @@ import Element exposing (..)
 import Collage exposing (..)
 import Color exposing (..)
 import Text
+import Html exposing (..)
 
 
 view : Game -> Html msg

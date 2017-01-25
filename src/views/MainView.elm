@@ -20,21 +20,21 @@ view game =
         content =
             case game.status of
                 NotStarted ->
-                    [ gameStatusText "Press space to start" Color.lightGreen ]
+                    [ gameStatusText "Press space to start" white ]
 
                 _ ->
                     let
                         pausedText =
                             case game.status of
                                 Paused ->
-                                    gameStatusText "Paused" Color.orange
+                                    gameStatusText "Paused" white
 
                                 _ ->
-                                    gameStatusText (toString game.points) Color.orange
+                                    gameStatusText (toString game.points) white
 
                         head =
                             square segmentSize
-                                |> filled green
+                                |> filled white
                                 |> move (toFloatTuple game.snake.head)
 
                         tail =
@@ -48,7 +48,7 @@ view game =
 
                         food =
                             square segmentSize
-                                |> filled orange
+                                |> filled game.food.color
                                 |> move (toFloatTuple game.food.position)
                     in
                         pausedText :: food :: head :: tail

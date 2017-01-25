@@ -13,7 +13,6 @@ import Keyboard exposing (KeyCode)
 import Time exposing (Time)
 import AnimationFrame
 import Random exposing (..)
-import Color exposing (..)
 
 
 main : Program Never Game Msg

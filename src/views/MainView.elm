@@ -21,7 +21,7 @@ view game =
         content =
             case game.status of
                 NotStarted ->
-                    [ gameStatusText "Press space to start" white ]
+                    [ gameStatusText ("Press space to start - " ++ toString game.points) white ]
 
                 _ ->
                     let

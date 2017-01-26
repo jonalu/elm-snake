@@ -18,9 +18,9 @@ init =
     }
 
 
-random : Random.Generator Food
-random =
-    map2 Food Position.random randomColor
+random : Int -> Random.Generator Food
+random gameBoardSize =
+    map2 Food (Position.random gameBoardSize) randomColor
 
 
 randomColor : Generator Color

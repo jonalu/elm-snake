@@ -1,13 +1,21 @@
 port module Main exposing (..)
 
-import Tests
+import Test exposing (..)
 import Test.Runner.Node exposing (run)
 import Json.Encode exposing (Value)
+import PositionTest
 
 
-main : Program Value
+main : Test.Runner.Node.TestProgram
 main =
-    run emit Tests.all
+    run emit all
 
 
 port emit : ( String, Value ) -> Cmd msg
+
+
+all : Test
+all =
+    describe
+        "A Test Suite"
+        [ PositionTest.all ]

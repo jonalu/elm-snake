@@ -3,6 +3,7 @@ module SnakeGame exposing (..)
 import Key exposing (..)
 import Direction exposing (..)
 import GameStatus exposing (..)
+import GameSettings exposing (gameBoardSize, segmentSize)
 import Game exposing (..)
 import Food exposing (..)
 import Snake exposing (..)
@@ -108,10 +109,10 @@ handleTick game =
             game.snake
 
         caughtFood =
-            Position.overlap snake.head game.food.position
+            Position.overlap segmentSize snake.head game.food.position
 
         collision =
-            Snake.collision snake
+            Snake.collision segmentSize snake
 
         points =
             case caughtFood of
@@ -132,14 +133,14 @@ handleTick game =
         msg =
             case caughtFood of
                 True ->
-                    Random.generate NewFood Food.random
+                    Random.generate NewFood <| Food.random gameBoardSize
 
                 False ->
                     Cmd.none
 
         newSnake =
             { snake
-                | head = Snake.updateHead snake
+                | head = Snake.updateHead (toFloat gameBoardSize) segmentSize snake
                 , tail = Snake.updateTail snake caughtFood
             }
     in

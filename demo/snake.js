@@ -11862,77 +11862,68 @@ var _jonalu$elm_snake$Direction$Down = {ctor: 'Down'};
 var _jonalu$elm_snake$Direction$Right = {ctor: 'Right'};
 var _jonalu$elm_snake$Direction$Up = {ctor: 'Up'};
 
-var _jonalu$elm_snake$GameSettings$initTailLength = 4;
-var _jonalu$elm_snake$GameSettings$segmentSize = 15.0;
-var _jonalu$elm_snake$GameSettings$gameBoardSize = 700;
-
-var _jonalu$elm_snake$Position$increase = function (currentPos) {
-	return (_elm_lang$core$Native_Utils.cmp(
-		currentPos,
-		_elm_lang$core$Basics$toFloat(_jonalu$elm_snake$GameSettings$gameBoardSize) / 2) > -1) ? (_elm_lang$core$Basics$toFloat(0 - _jonalu$elm_snake$GameSettings$gameBoardSize) / 2) : (currentPos + _jonalu$elm_snake$GameSettings$segmentSize);
-};
-var _jonalu$elm_snake$Position$decrease = function (currentPos) {
-	return (_elm_lang$core$Native_Utils.cmp(
-		currentPos,
-		_elm_lang$core$Basics$toFloat(0 - _jonalu$elm_snake$GameSettings$gameBoardSize) / 2) < 1) ? (_elm_lang$core$Basics$toFloat(_jonalu$elm_snake$GameSettings$gameBoardSize) / 2) : (currentPos - _jonalu$elm_snake$GameSettings$segmentSize);
-};
-var _jonalu$elm_snake$Position$update = F2(
-	function (position, direction) {
+var _jonalu$elm_snake$Position$increase = F3(
+	function (gameBoardSize, segmentSize, currentPos) {
+		return (_elm_lang$core$Native_Utils.cmp(currentPos, gameBoardSize / 2) > -1) ? ((0 - gameBoardSize) / 2) : (currentPos + segmentSize);
+	});
+var _jonalu$elm_snake$Position$decrease = F3(
+	function (gameBoardSize, segmentSize, currentPos) {
+		return (_elm_lang$core$Native_Utils.cmp(currentPos, (0 - gameBoardSize) / 2) < 1) ? (gameBoardSize / 2) : (currentPos - segmentSize);
+	});
+var _jonalu$elm_snake$Position$update = F4(
+	function (gameBoardSize, segmentSize, position, direction) {
 		var _p0 = direction;
 		switch (_p0.ctor) {
 			case 'Up':
 				return _elm_lang$core$Native_Utils.update(
 					position,
 					{
-						y: _jonalu$elm_snake$Position$increase(position.y)
+						y: A3(_jonalu$elm_snake$Position$increase, gameBoardSize, segmentSize, position.y)
 					});
 			case 'Right':
 				return _elm_lang$core$Native_Utils.update(
 					position,
 					{
-						x: _jonalu$elm_snake$Position$increase(position.x)
+						x: A3(_jonalu$elm_snake$Position$increase, gameBoardSize, segmentSize, position.x)
 					});
 			case 'Left':
 				return _elm_lang$core$Native_Utils.update(
 					position,
 					{
-						x: _jonalu$elm_snake$Position$decrease(position.x)
+						x: A3(_jonalu$elm_snake$Position$decrease, gameBoardSize, segmentSize, position.x)
 					});
 			default:
 				return _elm_lang$core$Native_Utils.update(
 					position,
 					{
-						y: _jonalu$elm_snake$Position$decrease(position.y)
+						y: A3(_jonalu$elm_snake$Position$decrease, gameBoardSize, segmentSize, position.y)
 					});
 		}
 	});
-var _jonalu$elm_snake$Position$overlap = F2(
-	function (posA, posB) {
+var _jonalu$elm_snake$Position$overlap = F3(
+	function (segmentSize, posA, posB) {
 		return (_elm_lang$core$Native_Utils.cmp(
 			_elm_lang$core$Basics$abs(posA.x - posB.x),
-			_jonalu$elm_snake$GameSettings$segmentSize) < 0) && (_elm_lang$core$Native_Utils.cmp(
+			segmentSize) < 0) && (_elm_lang$core$Native_Utils.cmp(
 			_elm_lang$core$Basics$abs(posA.y - posB.y),
-			_jonalu$elm_snake$GameSettings$segmentSize) < 0);
+			segmentSize) < 0);
 	});
 var _jonalu$elm_snake$Position$toFloatTuple = function (position) {
 	return {ctor: '_Tuple2', _0: position.x, _1: position.y};
 };
-var _jonalu$elm_snake$Position$createRandomGenerator = A2(
-	_elm_lang$core$Random$map,
-	function (n) {
-		return {x: n, y: n};
-	},
-	A2(_elm_lang$core$Random$float, -375.0, 375.0));
 var _jonalu$elm_snake$Position$Position = F2(
 	function (a, b) {
 		return {x: a, y: b};
 	});
 var _jonalu$elm_snake$Position$init = A2(_jonalu$elm_snake$Position$Position, 0.0, 0.0);
-var _jonalu$elm_snake$Position$random = A3(
-	_elm_lang$core$Random$map2,
-	_jonalu$elm_snake$Position$Position,
-	A2(_elm_lang$core$Random$float, -300.0, 300.0),
-	A2(_elm_lang$core$Random$float, -300.0, 300.0));
+var _jonalu$elm_snake$Position$random = function (gameBoardSize) {
+	var minMax = _elm_lang$core$Basics$toFloat(gameBoardSize) / 2;
+	return A3(
+		_elm_lang$core$Random$map2,
+		_jonalu$elm_snake$Position$Position,
+		A2(_elm_lang$core$Random$float, 0 - minMax, minMax),
+		A2(_elm_lang$core$Random$float, 0 - minMax, minMax));
+};
 
 var _jonalu$elm_snake$Food$randomColor = A4(
 	_elm_lang$core$Random$map3,
@@ -11948,12 +11939,21 @@ var _jonalu$elm_snake$Food$Food = F2(
 	function (a, b) {
 		return {position: a, color: b};
 	});
-var _jonalu$elm_snake$Food$random = A3(_elm_lang$core$Random$map2, _jonalu$elm_snake$Food$Food, _jonalu$elm_snake$Position$random, _jonalu$elm_snake$Food$randomColor);
+var _jonalu$elm_snake$Food$random = function (gameBoardSize) {
+	return A3(
+		_elm_lang$core$Random$map2,
+		_jonalu$elm_snake$Food$Food,
+		_jonalu$elm_snake$Position$random(gameBoardSize),
+		_jonalu$elm_snake$Food$randomColor);
+};
 
 var _jonalu$elm_snake$GameStatus$Paused = {ctor: 'Paused'};
 var _jonalu$elm_snake$GameStatus$NotStarted = {ctor: 'NotStarted'};
 var _jonalu$elm_snake$GameStatus$init = _jonalu$elm_snake$GameStatus$NotStarted;
 var _jonalu$elm_snake$GameStatus$Started = {ctor: 'Started'};
+
+var _jonalu$elm_snake$GameSettings$segmentSize = 14.0;
+var _jonalu$elm_snake$GameSettings$gameBoardSize = 700;
 
 var _jonalu$elm_snake$Snake$updateTail = F2(
 	function (snake, caughtFood) {
@@ -11985,39 +11985,55 @@ var _jonalu$elm_snake$Snake$updateTail = F2(
 		}();
 		return tail;
 	});
-var _jonalu$elm_snake$Snake$updateHead = function (snake) {
-	return A2(_jonalu$elm_snake$Position$update, snake.head, snake.direction);
-};
+var _jonalu$elm_snake$Snake$updateHead = F3(
+	function (gameBoardSize, segmentSize, snake) {
+		return A4(_jonalu$elm_snake$Position$update, gameBoardSize, segmentSize, snake.head, snake.direction);
+	});
 var _jonalu$elm_snake$Snake$updateDirection = F2(
 	function (direction, snake) {
 		return _elm_lang$core$Native_Utils.update(
 			snake,
 			{direction: direction});
 	});
-var _jonalu$elm_snake$Snake$collision = function (snake) {
-	return A2(
-		_elm_lang$core$List$any,
-		_jonalu$elm_snake$Position$overlap(snake.head),
-		snake.tail);
-};
-var _jonalu$elm_snake$Snake$initTail = A2(
-	_elm_lang$core$List$map,
-	function (n) {
+var _jonalu$elm_snake$Snake$collision = F2(
+	function (segmentSize, snake) {
 		return A2(
-			_jonalu$elm_snake$Position$Position,
-			_elm_lang$core$Basics$toFloat(0 - n) * _jonalu$elm_snake$GameSettings$segmentSize,
-			function (_) {
-				return _.y;
-			}(_jonalu$elm_snake$Position$init));
-	},
-	A2(_elm_lang$core$List$range, 1, _jonalu$elm_snake$GameSettings$initTailLength));
-var _jonalu$elm_snake$Snake$init = {tail: _jonalu$elm_snake$Snake$initTail, head: _jonalu$elm_snake$Position$init, direction: _jonalu$elm_snake$Direction$Right, color: _elm_lang$core$Color$lightGreen};
+			_elm_lang$core$List$any,
+			A2(_jonalu$elm_snake$Position$overlap, segmentSize, snake.head),
+			snake.tail);
+	});
+var _jonalu$elm_snake$Snake$initTail = function (segmentSize) {
+	return A2(
+		_elm_lang$core$List$map,
+		function (n) {
+			return A2(
+				_jonalu$elm_snake$Position$Position,
+				_elm_lang$core$Basics$toFloat(0 - n) * segmentSize,
+				function (_) {
+					return _.y;
+				}(_jonalu$elm_snake$Position$init));
+		},
+		A2(_elm_lang$core$List$range, 1, 4));
+};
+var _jonalu$elm_snake$Snake$init = function (segmentSize) {
+	return {
+		tail: _jonalu$elm_snake$Snake$initTail(segmentSize),
+		head: _jonalu$elm_snake$Position$init,
+		direction: _jonalu$elm_snake$Direction$Right,
+		color: _elm_lang$core$Color$lightGreen
+	};
+};
 var _jonalu$elm_snake$Snake$Snake = F4(
 	function (a, b, c, d) {
 		return {tail: a, head: b, direction: c, color: d};
 	});
 
-var _jonalu$elm_snake$Game$init = {status: _jonalu$elm_snake$GameStatus$init, snake: _jonalu$elm_snake$Snake$init, food: _jonalu$elm_snake$Food$init, points: 0};
+var _jonalu$elm_snake$Game$init = {
+	status: _jonalu$elm_snake$GameStatus$init,
+	snake: _jonalu$elm_snake$Snake$init(_jonalu$elm_snake$GameSettings$segmentSize),
+	food: _jonalu$elm_snake$Food$init,
+	points: 0
+};
 var _jonalu$elm_snake$Game$Game = F4(
 	function (a, b, c, d) {
 		return {status: a, snake: b, food: c, points: d};
@@ -12063,7 +12079,13 @@ var _jonalu$elm_snake$MainView$view = function (game) {
 		if (_p0.ctor === 'NotStarted') {
 			return {
 				ctor: '::',
-				_0: A2(_jonalu$elm_snake$MainView$gameStatusText, 'Press space to start', _elm_lang$core$Color$white),
+				_0: A2(
+					_jonalu$elm_snake$MainView$gameStatusText,
+					A2(
+						_elm_lang$core$Basics_ops['++'],
+						'Press space to start - ',
+						_elm_lang$core$Basics$toString(game.points)),
+					_elm_lang$core$Color$white),
 				_1: {ctor: '[]'}
 			};
 		} else {
@@ -12194,7 +12216,7 @@ var _jonalu$elm_snake$SnakeGame$NewFood = function (a) {
 };
 var _jonalu$elm_snake$SnakeGame$handleTick = function (game) {
 	var snake = game.snake;
-	var caughtFood = A2(_jonalu$elm_snake$Position$overlap, snake.head, game.food.position);
+	var caughtFood = A3(_jonalu$elm_snake$Position$overlap, _jonalu$elm_snake$GameSettings$segmentSize, snake.head, game.food.position);
 	var points = function () {
 		var _p3 = caughtFood;
 		if (_p3 === true) {
@@ -12206,12 +12228,15 @@ var _jonalu$elm_snake$SnakeGame$handleTick = function (game) {
 	var msg = function () {
 		var _p4 = caughtFood;
 		if (_p4 === true) {
-			return A2(_elm_lang$core$Random$generate, _jonalu$elm_snake$SnakeGame$NewFood, _jonalu$elm_snake$Food$random);
+			return A2(
+				_elm_lang$core$Random$generate,
+				_jonalu$elm_snake$SnakeGame$NewFood,
+				_jonalu$elm_snake$Food$random(_jonalu$elm_snake$GameSettings$gameBoardSize));
 		} else {
 			return _elm_lang$core$Platform_Cmd$none;
 		}
 	}();
-	var collision = _jonalu$elm_snake$Snake$collision(snake);
+	var collision = A2(_jonalu$elm_snake$Snake$collision, _jonalu$elm_snake$GameSettings$segmentSize, snake);
 	var gameStatus = function () {
 		var _p5 = collision;
 		if (_p5 === true) {
@@ -12223,7 +12248,11 @@ var _jonalu$elm_snake$SnakeGame$handleTick = function (game) {
 	var newSnake = _elm_lang$core$Native_Utils.update(
 		snake,
 		{
-			head: _jonalu$elm_snake$Snake$updateHead(snake),
+			head: A3(
+				_jonalu$elm_snake$Snake$updateHead,
+				_elm_lang$core$Basics$toFloat(_jonalu$elm_snake$GameSettings$gameBoardSize),
+				_jonalu$elm_snake$GameSettings$segmentSize,
+				snake),
 			tail: A2(_jonalu$elm_snake$Snake$updateTail, snake, caughtFood)
 		});
 	return {

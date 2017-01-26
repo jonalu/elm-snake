@@ -1,6 +1,5 @@
 module Position exposing (..)
 
-import GameSettings exposing (gameBoardSize, segmentSize)
 import Direction exposing (..)
 import Random exposing (..)
 
@@ -16,53 +15,52 @@ init =
     Position 0.0 0.0
 
 
-createRandomGenerator : Random.Generator Position
-createRandomGenerator =
-    map (\n -> { x = n, y = n }) (float -375.0 375.0)
-
-
 toFloatTuple : Position -> ( Float, Float )
 toFloatTuple position =
     ( position.x, position.y )
 
 
-random : Generator Position
-random =
-    map2 Position (float -300.0 300.0) (float -300.0 300.0)
+random : Int -> Generator Position
+random gameBoardSize =
+    let
+        minMax =
+            toFloat gameBoardSize / 2
+    in
+        map2 Position (float -minMax minMax) (float -minMax minMax)
 
 
-overlap : Position -> Position -> Bool
-overlap posA posB =
+overlap : Float -> Position -> Position -> Bool
+overlap segmentSize posA posB =
     abs (posA.x - posB.x) < segmentSize && abs (posA.y - posB.y) < segmentSize
 
 
-update : Position -> Direction -> Position
-update position direction =
+update : Float -> Float -> Position -> Direction -> Position
+update gameBoardSize segmentSize position direction =
     case direction of
         Up ->
-            { position | y = increase position.y }
+            { position | y = increase gameBoardSize segmentSize position.y }
 
         Right ->
-            { position | x = increase position.x }
+            { position | x = increase gameBoardSize segmentSize position.x }
 
         Left ->
-            { position | x = decrease position.x }
+            { position | x = decrease gameBoardSize segmentSize position.x }
 
         Down ->
-            { position | y = decrease position.y }
+            { position | y = decrease gameBoardSize segmentSize position.y }
 
 
-decrease : Float -> Float
-decrease currentPos =
-    if currentPos <= toFloat -gameBoardSize / 2 then
-        toFloat gameBoardSize / 2
+decrease : Float -> Float -> Float -> Float
+decrease gameBoardSize segmentSize currentPos =
+    if currentPos <= -gameBoardSize / 2 then
+        gameBoardSize / 2
     else
         currentPos - segmentSize
 
 
-increase : Float -> Float
-increase currentPos =
-    if currentPos >= toFloat gameBoardSize / 2 then
-        toFloat -gameBoardSize / 2
+increase : Float -> Float -> Float -> Float
+increase gameBoardSize segmentSize currentPos =
+    if currentPos >= gameBoardSize / 2 then
+        -gameBoardSize / 2
     else
         currentPos + segmentSize

@@ -8,9 +8,4 @@ gameBoardSize =
 
 segmentSize : Float
 segmentSize =
-    15.0
-
-
-initTailLength : Int
-initTailLength =
-    4
+    14.0

@@ -82,7 +82,10 @@ subscriptions game =
         NotStarted ->
             Keyboard.downs KeyDown
 
-        _ ->
+        Paused ->
+            Keyboard.downs KeyDown
+
+        Started ->
             Sub.batch
                 [ Keyboard.downs KeyDown
                 , AnimationFrame.diffs Tick
